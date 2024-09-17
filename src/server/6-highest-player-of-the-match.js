@@ -1,14 +1,9 @@
 // 6: Find a player who has won the highest number of Player of the Match awards for each season
 
 import match from "../data/matches.json" assert { type: "json" };
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const dataPath = join(__dirname, "../public/output/highestPlayerOfTheMatch.json");
+const dataPath = "./src/public/output/highestPlayerOfTheMatch.json";
 
 const highest_Player_Of_The_Match = (match) => {
     const result = {};

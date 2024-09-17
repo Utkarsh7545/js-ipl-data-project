@@ -1,14 +1,9 @@
 // 5: Find the number of times each team won the toss and also won the match
 
 import match from "../data/matches.json" assert { type: "json" };
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const dataPath = join(__dirname, "../public/output/teamWonTheTossAndMatch.json");
+const dataPath = "./src/public/output/teamWonTheTossAndMatch.json";
 
 const team_Won_The_Toss_And_Match = (match) => {
     const result = {};

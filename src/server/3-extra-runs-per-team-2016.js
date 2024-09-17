@@ -2,14 +2,9 @@
 
 import match from "../data/matches.json" assert { type: "json" };
 import delivery from "../data/deliveries.json" assert { type: "json" };
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const dataPath = join(__dirname, "../public/output/extraRunsPerTeam2016.json");
+const dataPath = "./src/public/output/extraRunsPerTeam2016.json";
 
 const extra_Runs_Per_Team_2016 = (match, delivery) => {
     const result = {};

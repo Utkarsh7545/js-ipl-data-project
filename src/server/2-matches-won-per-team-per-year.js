@@ -1,14 +1,9 @@
 // 2: Number of matches won per team per year in IPL.
 
 import match from "../data/matches.json" assert { type: "json" };
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const dataPath = join(__dirname, "../public/output/matchesWonPerTeamPerYear.json");
+const dataPath = "./src/public/output/matchesWonPerTeamPerYear.json";
 
 const matches_Won_Per_Team_Per_Year = (data) => {
     const result = {};

@@ -1,14 +1,9 @@
 // 9: Find the bowler with the best economy in super overs
 
 import delivery from "../data/deliveries.json" assert { type: "json" };
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const dataPath = join(__dirname, "../public/output/bestEconomyInSuperOvers.json");
+const dataPath = "./src/public/output/bestEconomyInSuperOvers.json";
 
 const best_Economy_In_Super_Overs = (delivery) => {
     const result = {};

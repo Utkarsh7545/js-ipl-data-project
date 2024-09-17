@@ -1,14 +1,9 @@
 // 8: Find the highest number of times one player has been dismissed by another player
 
 import delivery from "../data/deliveries.json" assert { type: "json" };
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import fs from "fs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const dataPath = join(__dirname, "../public/output/highestDismissalsByBowler.json");
+const dataPath = "./src/public/output/highestDismissalsByBowler.json";
 
 const highest_Dismissals_By_Bowler = (delivery) => {
     const result = {};

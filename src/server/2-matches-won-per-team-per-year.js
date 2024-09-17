@@ -6,24 +6,24 @@ import fs from "fs";
 const dataPath = "./src/public/output/matchesWonPerTeamPerYear.json";
 
 const matches_Won_Per_Team_Per_Year = (data) => {
-    const result = {};
+    
+    return data.reduce((result, match) => {
+        const year = match.season;
+        const winningTeam = match.winner;
 
-    for(let i=0; i<data.length; i++){
-    const year = data[i].season;
-    const winningTeam = data[i].winner;
-        if (winningTeam !== null && year !== null) {
+        if(year && winningTeam){
             if(!result[year]){
                 result[year] = {};
             }
-            if(result[year][winningTeam]){
-                result[year][winningTeam]++;
-            }
-            else{
+            if(!result[year][winningTeam]){
                 result[year][winningTeam] = 1;
             }
+            else{
+                result[year][winningTeam]++;
+            }
         }
-    }
-    return result;
+        return result;
+    }, {})
 }
 
 let matchesRecord = matches_Won_Per_Team_Per_Year(match);

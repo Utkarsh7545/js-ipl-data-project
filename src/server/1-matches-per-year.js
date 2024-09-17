@@ -8,16 +8,16 @@ const dataPath = "./src/public/output/matchesPerYear.json";
 const matches_Per_Year = (data) => {
     const result = {};
 
-    for(let i=0; i<data.length; i++){
-        if (data[i].season !== null) {
-            if(result[data[i].season]){
-                result[data[i].season]++;
+    data.forEach(element => {
+        if(element.season !== null){
+            if(!result.hasOwnProperty(element.season)){
+                result[element.season] = 1;
             }
             else{
-                result[data[i].season] = 1;
+                result[element.season]++;
             }
         }
-    }
+    })
     return result;
 }
 

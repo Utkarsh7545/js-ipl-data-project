@@ -6,17 +6,15 @@ import fs from "fs";
 const dataPath = "./src/public/output/teamWonTheTossAndMatch.json";
 
 const team_Won_The_Toss_And_Match = (match) => {
-    const result = {};
-    
-    for(let value of match){
-        if(value.toss_winner && value.winner && (value.toss_winner === value.winner)){
-            if(!result[value.winner]){
-                result[value.winner] = 0;
-            }    
-            result[value.winner]++;
+    return match.reduce((acc, curr) => {
+        if(curr.toss_winner === curr.winner){
+            if(!acc[curr.winner]){
+                acc[curr.winner] = 0;
+            }
+            acc[curr.winner]++;
         }
-    }
-    return result;
+        return acc;
+    }, {});
 }
 
 let matchesRecord = team_Won_The_Toss_And_Match(match);

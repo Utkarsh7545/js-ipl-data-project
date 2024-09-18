@@ -6,45 +6,39 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/top10EconomicalBowlers2015.json";
 
-const top10_Economical_Bowlers_2015 = (match, delivery) => {
-    const result = {};
-    const matchId = [];
+const top10_Economical_Bowlers_2015 = (match, delivery, year) => {
+  const id = match
+    .filter((value) => value.season === year)
+    .map((matchId) => matchId.id);
 
-    for(let value of match){
-        if(value.season === "2015"){
-            matchId.push(value.id);
-        }
+  const result = delivery.reduce((acc, curr) => {
+    if (id.includes(curr.match_id)) {
+      if (!acc[curr.bowler]) {
+        acc[curr.bowler] = { runs: 0, balls: 0 };
+      }
+      acc[curr.bowler].runs += parseInt(curr.total_runs);
+      if (curr.wide_runs === "0" && curr.noball_runs === "0") {
+        acc[curr.bowler].balls++;
+      }
     }
-    
-    for(let value of delivery){
-        if(matchId.includes(value.match_id)){
-            if(!result[value.bowler]){
-                result[value.bowler] = {"runsConceded" : 0, "ballsBowled" : 0};
-            }
-            result[value.bowler].runsConceded += parseInt(value.total_runs);
-            if(value.wide_runs === "0" && value.noball_runs === "0"){
-                result[value.bowler].ballsBowled++;
-            }
-        }
-    }
+    return acc;
+  }, {});
 
-    const bowlerEconomy = [];
+  return Object.entries(result)
+    .reduce((acc, curr) => {
+      const run = curr[1].runs;
+      const over = curr[1].balls / 6;
+      const economy = (run / over).toFixed(2);
 
-    for(let value in result){
-        const runs = result[value].runsConceded;
-        const overs = result[value].ballsBowled / 6;
-        const economy = (runs / overs).toFixed(2);
-        
-        bowlerEconomy.push({"Bowler" : value, "Economy" : economy});
-    }
-    
-    bowlerEconomy.sort((a,b) => a.Economy - b.Economy);
-    const top10 = bowlerEconomy.slice(0, 10);
-    
-    return top10;
-}
+      const obj = { Bowler: curr[0], Economy: economy };
 
-let matchesRecord = top10_Economical_Bowlers_2015(match, delivery);
+      acc.push(obj);
+      return acc;
+    }, [])
+    .sort((a, b) => a.Economy - b.Economy)
+    .slice(0, 10);
+};
+
+let matchesRecord = top10_Economical_Bowlers_2015(match, delivery, "2015");
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
-

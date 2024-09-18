@@ -7,22 +7,15 @@ const dataPath = "./src/public/output/matchesWonPerTeamPerYear.json";
 
 const matches_Won_Per_Team_Per_Year = (data) => {
     
-    return data.reduce((result, match) => {
-        const year = match.season;
-        const winningTeam = match.winner;
-
-        if(year && winningTeam){
-            if(!result[year]){
-                result[year] = {};
-            }
-            if(!result[year][winningTeam]){
-                result[year][winningTeam] = 1;
-            }
-            else{
-                result[year][winningTeam]++;
-            }
+    return data.reduce((acc, curr) => {
+        if(!acc[curr.season]){
+            acc[curr.season] = {};
         }
-        return result;
+        if(!acc[curr.season][curr.winner]){
+            acc[curr.season][curr.winner] = 0;
+        }
+        acc[curr.season][curr.winner]++;
+        return acc;
     }, {})
 }
 

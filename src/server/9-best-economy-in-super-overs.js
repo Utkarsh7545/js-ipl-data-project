@@ -6,36 +6,31 @@ import fs from "fs";
 const dataPath = "./src/public/output/bestEconomyInSuperOvers.json";
 
 const best_Economy_In_Super_Overs = (delivery) => {
-    const result = {};
-
-    for(let value of delivery){
-        const bowler = value.bowler;
-        const runs = parseInt(value.batsman_runs) + parseInt(value.wide_runs) + parseInt(value.noball_runs);
-        const superOver = value.is_super_over;
-
-        if(superOver !== "0"){
-            if(!result[bowler]){
-                result[bowler] = {"Runs" : 0, "Balls" : 0};
+    const bowlers = delivery.reduce((bowlerDetails, score) => {
+        const runs = parseInt(score.batsman_runs) + parseInt(score.wide_runs) + parseInt(score.noball_runs);
+        const bowler = score.bowler;
+        if(score.is_super_over !== "0"){
+            if(!bowlerDetails[bowler]){
+                bowlerDetails[bowler] = {"runs" : 0, "balls" : 0};
             }
-            result[bowler].Runs += runs;
-            result[bowler].Balls++;
+            bowlerDetails[bowler].runs += runs;
+            bowlerDetails[bowler].balls++;
         }
-    }
+        return bowlerDetails;
+    }, {});
 
-    let finalResult = {"Bowler" : "", "Economy" : Infinity};
+    return Object.entries(bowlers)
+    .reduce((score, [bowler, value]) => {
+        const run = value.runs;
+        const over = value.balls / 6;
+        const economy = run / over;
 
-    for(let bowler in result){
-        const runs = result[bowler].Runs;
-        const overs = result[bowler].Balls / 6;
-        const economy = runs / overs;
-
-        if(finalResult.Economy > economy){
-            finalResult.Economy = economy.toFixed(2);
-            finalResult.Bowler = bowler;
+        if(economy < score.Economy){
+            score.Economy = economy.toFixed(2);
+            score.Bowler = bowler;
         }
-    }
-    return finalResult;
-    
+        return score;
+    }, {"Bowler" : "", "Economy" : Infinity});
 }
 
 let matchesRecord = best_Economy_In_Super_Overs(delivery);

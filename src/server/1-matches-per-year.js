@@ -6,19 +6,17 @@ import fs from "fs";
 const dataPath = "./src/public/output/matchesPerYear.json";
 
 const matches_Per_Year = (data) => {
-    const result = {};
-
-    data.forEach(element => {
-        if(element.season !== null){
-            if(!result.hasOwnProperty(element.season)){
-                result[element.season] = 1;
+    return data.reduce((acc, curr) => {
+        if(curr.season !== null){
+            if(!acc[curr.season]){
+                acc[curr.season] = 1;
             }
             else{
-                result[element.season]++;
+                acc[curr.season]++;
             }
         }
-    })
-    return result;
+        return acc;
+    }, {});
 }
 
 let matchesRecord = matches_Per_Year(match);

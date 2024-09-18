@@ -6,33 +6,32 @@ import fs from "fs";
 const dataPath = "./src/public/output/highestPlayerOfTheMatch.json";
 
 const highest_Player_Of_The_Match = (match) => {
-    const result = {};
+    const result = match.reduce((acc, curr) => {
+        if(!acc[curr.season]){
+            acc[curr.season] = {};
+        }
+        if(!acc[curr.season][curr.player_of_match]){
+            acc[curr.season][curr.player_of_match] = 0;
+        }
+        acc[curr.season][curr.player_of_match]++;
+        return acc;
+    }, {})
     
-    for(let value of match){
-        if(value.season){
-            if(!result[value.season]){
-                result[value.season] = {};
+    return Object.entries(result)
+    .reduce((acc, [key, value]) => {
+        const x = Object.entries(value)
+        .reduce((acc1, [key1, value1]) => {
+            
+            if(value1 > acc1.awards){
+                acc1.awards = value1;
+                acc1.player = key1;
             }
-            if(!result[value.season][value.player_of_match]){
-                result[value.season][value.player_of_match] = 0;
-            }
-            result[value.season][value.player_of_match]++;
-        }
-    }
+            return acc1;
+        }, {player : "", awards : 0});
 
-    const finalResult = {};
-    for(let value in result){
-        let max = 0;
-        let player = "";
-        for(let players in result[value]){
-            if(result[value][players] > max){
-                max = result[value][players];
-                player = players;
-            }
-        }
-        finalResult[value] = { [player] : max } ;
-    }
-    return finalResult;
+        acc[key] = x;
+        return acc;
+    }, {});
 }
 
 let matchesRecord = highest_Player_Of_The_Match(match);

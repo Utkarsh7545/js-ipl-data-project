@@ -6,28 +6,22 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/extraRunsPerTeam2016.json";
 
-const extra_Runs_Per_Team_2016 = (match, delivery) => {
-    const result = {};
-    const matchId = [];
-
-    for(let value of match){
-        if(value.season === "2016"){
-            matchId.push(value.id);
-        }
-    }
-
-    for(let value of delivery){
-        if(matchId.includes(value.match_id)){
-            if(!result[value.bowling_team]){
-                result[value.bowling_team] = 0;
+const extra_Runs_Per_Team_2016 = (match, delivery, year) => {
+  const id = match
+    .filter((value) => value.season === year)
+    .map((value) => value.id);
+  
+    return delivery.reduce((acc, curr) => {
+        if(id.includes(curr.match_id)){
+            if(!acc[curr.bowling_team]){
+                acc[curr.bowling_team] = 0;
             }
-            result[value.bowling_team] += parseInt(value.extra_runs);  
+            acc[curr.bowling_team] += parseInt(curr.extra_runs);
         }
-    }
-    return result;
-}
+        return acc;
+    }, {});
+};
 
-let matchesRecord = extra_Runs_Per_Team_2016(match, delivery);
+let matchesRecord = extra_Runs_Per_Team_2016(match, delivery, "2016");
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
-

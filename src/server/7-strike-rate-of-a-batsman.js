@@ -7,43 +7,40 @@ import fs from "fs";
 const dataPath = "./src/public/output/strikeRateOfABatsman.json";
 
 const strike_Rate_Of_A_Batsman = (match, delivery) => {
-    const result = {};
-    const matchId_Season = {};
+    const ids = match.reduce((acc , curr) => {
+        acc[curr.id] = curr.season;
+        return acc;
+    }, {});
 
-    for(let value of match){
-        matchId_Season[value.id] = value.season;
-    }
+    const result = delivery.reduce((acc, curr) => {
+        const year = ids[curr.match_id];
+        const batsman = curr.batsman;
 
-    for(let value of delivery){
-        const batsman = value.batsman;
-        const runs = parseInt(value.batsman_runs);
-        const balls = 1;
-        const season = matchId_Season[value.match_id];
-
-        if(season){
-            if(!result[season]){
-                result[season] = {};
-            }
-            if(!result[season][batsman]){
-                result[season][batsman] = {"runs" : 0, "balls" : 0};
-            }
-            result[season][batsman].runs += runs;
-            result[season][batsman].balls++;
+        if(!acc[year]){
+            acc[year] = {};
         }
-    }
-
-    const strikeRates = {};
-
-    for(let season in result){
-        strikeRates[season] = {};
-        for(let batsman in result[season]){
-            const runs = result[season][batsman].runs;
-            const balls = result[season][batsman].balls;
-            const strikeRate = (runs / balls) * 100;
-            strikeRates[season][batsman] = strikeRate.toFixed(2);
+        if(!acc[year][batsman]){
+            acc[year][batsman] = {"runs" : 0, "balls" : 0};
         }
-    }
-    return strikeRates;
+        acc[year][batsman].runs += parseInt(curr.batsman_runs);
+        if(curr.wide_runs === "0" && curr.noball_runs === "0"){
+            acc[year][batsman].balls++;
+        }
+        return acc;
+    }, {});
+
+    return Object.entries(result)
+    .reduce((acc, [year, players]) => {
+        acc[year] = Object.entries(players).reduce((strikeRates, [player, stats]) => {
+            const run = stats.runs;
+            const ball = stats.balls;
+            const strikeRate = (run / ball) * 100;
+
+            strikeRates[player] = strikeRate.toFixed(2);
+            return strikeRates;
+        }, {});
+        return acc;
+    }, {});
 }
 
 let matchesRecord = strike_Rate_Of_A_Batsman(match, delivery);

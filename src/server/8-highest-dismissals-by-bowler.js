@@ -6,37 +6,40 @@ import fs from "fs";
 const dataPath = "./src/public/output/highestDismissalsByBowler.json";
 
 const highest_Dismissals_By_Bowler = (delivery) => {
-    const result = {};
+  let mostDismissedBatsman = "";
+  let mostWicketTaker = "";
+  let mostDismissals = 0;
 
-    for(let value of delivery){
-        const batsman = value.batsman;
-        const bowler = value.bowler;
-        const dismissals = value.dismissal_kind;
+  const dismissals = delivery.reduce((acc, curr) => {
+    const batsman = curr.batsman;
+    const bowler = curr.bowler;
+    const dismissal = curr.dismissal_kind;
 
-        if(dismissals && dismissals !== "run out"){
-            if(!result[batsman]){
-                result[batsman] = {};
-            }
-            if(!result[batsman][bowler]){
-                result[batsman][bowler] = 0;
-            }
-            result[batsman][bowler]++;
-        }
+    if (dismissal && dismissal !== "run out") {
+      if (!acc[bowler]) {
+        acc[bowler] = {};
+      }
+      if (!acc[bowler][batsman]) {
+        acc[bowler][batsman] = 0;
+      }
+      acc[bowler][batsman]++;
+
+      if (mostDismissals < acc[bowler][batsman]) {
+        mostDismissals = acc[bowler][batsman];
+        mostDismissedBatsman = batsman;
+        mostWicketTaker = bowler;
+      }
     }
-    
-    let finalResult = {"Batsman" : "", "Bowler" : "", "Dismissals" : 0};
 
-    for(let batsman in result){
-        for(let bowler in result[batsman]){
-            if(result[batsman][bowler] > finalResult.Dismissals){
-                finalResult.Batsman = batsman;
-                finalResult.Bowler = bowler;
-                finalResult.Dismissals = result[batsman][bowler];
-            }
-        }
-    }
-    return finalResult;
-}
+    return acc;
+  }, {});
+
+  return {
+    Batsman: mostDismissedBatsman,
+    Bowler: mostWicketTaker,
+    Dismissals: mostDismissals,
+  };
+};
 
 let matchesRecord = highest_Dismissals_By_Bowler(delivery);
 

@@ -6,39 +6,40 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/top10EconomicalBowlers2015.json";
 
-const top10_Economical_Bowlers_2015 = (match, delivery, year) => {
+const top10EconomicalBowlers2015 = (match, delivery, year) => {
   const id = match
-    .filter((value) => value.season === year)
+    .filter((matchId) => matchId.season === year)
     .map((matchId) => matchId.id);
 
-  const result = delivery.reduce((acc, curr) => {
-    if (id.includes(curr.match_id)) {
-      if (!acc[curr.bowler]) {
-        acc[curr.bowler] = { runs: 0, balls: 0 };
+  const bowlersEconomy = delivery.reduce((team, matches) => {
+    if (id.includes(matches.match_id)) {
+      if (!team[matches.bowler]) {
+        team[matches.bowler] = { runs: 0, balls: 0 };
       }
-      acc[curr.bowler].runs += parseInt(curr.total_runs);
-      if (curr.wide_runs === "0" && curr.noball_runs === "0") {
-        acc[curr.bowler].balls++;
+      team[matches.bowler].runs += parseInt(matches.total_runs);
+      if (matches.wide_runs === "0" && matches.noball_runs === "0") {
+        team[matches.bowler].balls++;
       }
     }
-    return acc;
+    return team;
   }, {});
 
-  return Object.entries(result)
-    .reduce((acc, curr) => {
-      const run = curr[1].runs;
-      const over = curr[1].balls / 6;
+  return Object.entries(bowlersEconomy)
+    .reduce((bowler, stats) => {
+      const run = stats[1].runs;
+      const over = stats[1].balls / 6;
       const economy = (run / over).toFixed(2);
 
-      const obj = { Bowler: curr[0], Economy: economy };
+      const bowlerStats = { Bowler: stats[0], Economy: economy };
 
-      acc.push(obj);
-      return acc;
+      bowler.push(bowlerStats);
+      return bowler;
     }, [])
     .sort((a, b) => a.Economy - b.Economy)
     .slice(0, 10);
 };
 
-let matchesRecord = top10_Economical_Bowlers_2015(match, delivery, "2015");
+let matchesRecord = top10EconomicalBowlers2015(match, delivery, "2015");
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
+

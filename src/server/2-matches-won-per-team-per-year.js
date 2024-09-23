@@ -5,21 +5,21 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/matchesWonPerTeamPerYear.json";
 
-const matches_Won_Per_Team_Per_Year = (data) => {
+const matchesWonPerTeamPerYear = (match) => {
     
-    return data.reduce((acc, curr) => {
-        if(!acc[curr.season]){
-            acc[curr.season] = {};
+    return match.reduce((matchWonPerTeamPerYear, matches) => {
+        if(!matchWonPerTeamPerYear[matches.season]){
+            matchWonPerTeamPerYear[matches.season] = {};
         }
-        if(!acc[curr.season][curr.winner]){
-            acc[curr.season][curr.winner] = 0;
+        if(!matchWonPerTeamPerYear[matches.season][matches.winner]){
+            matchWonPerTeamPerYear[matches.season][matches.winner] = 0;
         }
-        acc[curr.season][curr.winner]++;
-        return acc;
+        matchWonPerTeamPerYear[matches.season][matches.winner]++;
+        return matchWonPerTeamPerYear;
     }, {})
 }
 
-let matchesRecord = matches_Won_Per_Team_Per_Year(match);
+let matchesRecord = matchesWonPerTeamPerYear(match);
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
 

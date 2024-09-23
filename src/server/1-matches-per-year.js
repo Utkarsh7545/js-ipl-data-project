@@ -5,21 +5,21 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/matchesPerYear.json";
 
-const matches_Per_Year = (data) => {
-    return data.reduce((acc, curr) => {
-        if(curr.season !== null){
-            if(!acc[curr.season]){
-                acc[curr.season] = 1;
+const matchesPerYear = (match) => {
+    return match.reduce((totalMatchesPerYear, matches) => {
+        if(matches.season !== null){
+            if(!totalMatchesPerYear[matches.season]){
+                totalMatchesPerYear[matches.season] = 1;
             }
             else{
-                acc[curr.season]++;
+                totalMatchesPerYear[matches.season]++;
             }
         }
-        return acc;
+        return totalMatchesPerYear;
     }, {});
 }
 
-let matchesRecord = matches_Per_Year(match);
+let matchesRecord = matchesPerYear(match);
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
 

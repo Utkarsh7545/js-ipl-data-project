@@ -5,33 +5,33 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/highestDismissalsByBowler.json";
 
-const highest_Dismissals_By_Bowler = (delivery) => {
+const highestDismissalsByBowler = (delivery) => {
   let mostDismissedBatsman = "";
   let mostWicketTaker = "";
   let mostDismissals = 0;
 
-  const dismissals = delivery.reduce((acc, curr) => {
-    const batsman = curr.batsman;
-    const bowler = curr.bowler;
-    const dismissal = curr.dismissal_kind;
+  const dismissals = delivery.reduce((highestDismissals, matches) => {
+    const batsman = matches.batsman;
+    const bowler = matches.bowler;
+    const dismissal = matches.dismissal_kind;
 
     if (dismissal && dismissal !== "run out") {
-      if (!acc[bowler]) {
-        acc[bowler] = {};
+      if (!highestDismissals[bowler]) {
+        highestDismissals[bowler] = {};
       }
-      if (!acc[bowler][batsman]) {
-        acc[bowler][batsman] = 0;
+      if (!highestDismissals[bowler][batsman]) {
+        highestDismissals[bowler][batsman] = 0;
       }
-      acc[bowler][batsman]++;
+      highestDismissals[bowler][batsman]++;
 
-      if (mostDismissals < acc[bowler][batsman]) {
-        mostDismissals = acc[bowler][batsman];
+      if (mostDismissals < highestDismissals[bowler][batsman]) {
+        mostDismissals = highestDismissals[bowler][batsman];
         mostDismissedBatsman = batsman;
         mostWicketTaker = bowler;
       }
     }
 
-    return acc;
+    return highestDismissals;
   }, {});
 
   return {
@@ -41,7 +41,7 @@ const highest_Dismissals_By_Bowler = (delivery) => {
   };
 };
 
-let matchesRecord = highest_Dismissals_By_Bowler(delivery);
+let matchesRecord = highestDismissalsByBowler(delivery);
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
 

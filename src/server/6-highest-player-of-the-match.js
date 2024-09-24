@@ -5,36 +5,37 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/highestPlayerOfTheMatch.json";
 
-const highest_Player_Of_The_Match = (match) => {
-    const result = match.reduce((acc, curr) => {
-        if(!acc[curr.season]){
-            acc[curr.season] = {};
+const highestPlayerOfTheMatch = (match) => {
+
+    const playerOfTheMatch = match.reduce((yearAndPlayer, matches) => {
+        if(!yearAndPlayer[matches.season]){
+            yearAndPlayer[matches.season] = {};
         }
-        if(!acc[curr.season][curr.player_of_match]){
-            acc[curr.season][curr.player_of_match] = 0;
+        if(!yearAndPlayer[matches.season][matches.player_of_match]){
+            yearAndPlayer[matches.season][matches.player_of_match] = 0;
         }
-        acc[curr.season][curr.player_of_match]++;
-        return acc;
+        yearAndPlayer[matches.season][matches.player_of_match]++;
+        return yearAndPlayer;
     }, {})
     
-    return Object.entries(result)
-    .reduce((acc, [key, value]) => {
-        const x = Object.entries(value)
-        .reduce((acc1, [key1, value1]) => {
+    return Object.entries(playerOfTheMatch)
+    .reduce((highestPlayerOfMatch, [year, playerAndAward]) => {
+        const playerAndAwards = Object.entries(playerAndAward)
+        .reduce((matches, [player, award]) => {
             
-            if(value1 > acc1.awards){
-                acc1.awards = value1;
-                acc1.player = key1;
+            if(award > matches.awards){
+                matches.awards = award;
+                matches.player = player;
             }
-            return acc1;
+            return matches;
         }, {player : "", awards : 0});
 
-        acc[key] = x;
-        return acc;
+        highestPlayerOfMatch[year] = playerAndAwards;
+        return highestPlayerOfMatch;
     }, {});
 }
 
-let matchesRecord = highest_Player_Of_The_Match(match);
+let matchesRecord = highestPlayerOfTheMatch(match);
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
 

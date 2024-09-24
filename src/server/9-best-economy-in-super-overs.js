@@ -5,7 +5,7 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/bestEconomyInSuperOvers.json";
 
-const best_Economy_In_Super_Overs = (delivery) => {
+const bestEconomyInSuperOvers = (delivery) => {
     const bowlers = delivery.reduce((bowlerDetails, score) => {
         const runs = parseInt(score.batsman_runs) + parseInt(score.wide_runs) + parseInt(score.noball_runs);
         const bowler = score.bowler;
@@ -20,9 +20,9 @@ const best_Economy_In_Super_Overs = (delivery) => {
     }, {});
 
     return Object.entries(bowlers)
-    .reduce((score, [bowler, value]) => {
-        const run = value.runs;
-        const over = value.balls / 6;
+    .reduce((score, [bowler, stats]) => {
+        const run = stats.runs;
+        const over = stats.balls / 6;
         const economy = run / over;
 
         if(economy < score.Economy){
@@ -33,7 +33,7 @@ const best_Economy_In_Super_Overs = (delivery) => {
     }, {"Bowler" : "", "Economy" : Infinity});
 }
 
-let matchesRecord = best_Economy_In_Super_Overs(delivery);
+let matchesRecord = bestEconomyInSuperOvers(delivery);
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
 

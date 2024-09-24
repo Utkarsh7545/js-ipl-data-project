@@ -5,19 +5,19 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/teamWonTheTossAndMatch.json";
 
-const team_Won_The_Toss_And_Match = (match) => {
-    return match.reduce((acc, curr) => {
-        if(curr.toss_winner === curr.winner){
-            if(!acc[curr.winner]){
-                acc[curr.winner] = 0;
+const teamWonTheTossAndMatch = (match) => {
+    return match.reduce((teamWonTossAndMatch, team) => {
+        if(team.toss_winner === team.winner){
+            if(!teamWonTossAndMatch[team.winner]){
+                teamWonTossAndMatch[team.winner] = 0;
             }
-            acc[curr.winner]++;
+            teamWonTossAndMatch[team.winner]++;
         }
-        return acc;
+        return teamWonTossAndMatch;
     }, {});
 }
 
-let matchesRecord = team_Won_The_Toss_And_Match(match);
+let matchesRecord = teamWonTheTossAndMatch(match);
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
 

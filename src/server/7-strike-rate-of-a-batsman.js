@@ -6,32 +6,32 @@ import fs from "fs";
 
 const dataPath = "./src/public/output/strikeRateOfABatsman.json";
 
-const strike_Rate_Of_A_Batsman = (match, delivery) => {
-    const ids = match.reduce((acc , curr) => {
-        acc[curr.id] = curr.season;
-        return acc;
+const strikeRateOfABatsman = (match, delivery) => {
+    const ids = match.reduce((matchId , matches) => {
+        matchId[matches.id] = matches.season;
+        return matchId;
     }, {});
 
-    const result = delivery.reduce((acc, curr) => {
-        const year = ids[curr.match_id];
-        const batsman = curr.batsman;
+    const batsmanScore = delivery.reduce((yearAndPlayer, matches) => {
+        const year = ids[matches.match_id];
+        const batsman = matches.batsman;
 
-        if(!acc[year]){
-            acc[year] = {};
+        if(!yearAndPlayer[year]){
+            yearAndPlayer[year] = {};
         }
-        if(!acc[year][batsman]){
-            acc[year][batsman] = {"runs" : 0, "balls" : 0};
+        if(!yearAndPlayer[year][batsman]){
+            yearAndPlayer[year][batsman] = {"runs" : 0, "balls" : 0};
         }
-        acc[year][batsman].runs += parseInt(curr.batsman_runs);
-        if(curr.wide_runs === "0" && curr.noball_runs === "0"){
-            acc[year][batsman].balls++;
+        yearAndPlayer[year][batsman].runs += parseInt(matches.batsman_runs);
+        if(matches.wide_runs === "0" && matches.noball_runs === "0"){
+            yearAndPlayer[year][batsman].balls++;
         }
-        return acc;
+        return yearAndPlayer;
     }, {});
 
-    return Object.entries(result)
-    .reduce((acc, [year, players]) => {
-        acc[year] = Object.entries(players).reduce((strikeRates, [player, stats]) => {
+    return Object.entries(batsmanScore)
+    .reduce((strikeRateOfBatsman, [year, players]) => {
+        strikeRateOfBatsman[year] = Object.entries(players).reduce((strikeRates, [player, stats]) => {
             const run = stats.runs;
             const ball = stats.balls;
             const strikeRate = (run / ball) * 100;
@@ -39,11 +39,11 @@ const strike_Rate_Of_A_Batsman = (match, delivery) => {
             strikeRates[player] = strikeRate.toFixed(2);
             return strikeRates;
         }, {});
-        return acc;
+        return strikeRateOfBatsman;
     }, {});
 }
 
-let matchesRecord = strike_Rate_Of_A_Batsman(match, delivery);
+let matchesRecord = strikeRateOfABatsman(match, delivery);
 
 fs.writeFileSync(dataPath, JSON.stringify(matchesRecord, null, 2), "utf-8");
 
